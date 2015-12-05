@@ -1,16 +1,31 @@
 var dataset = require('./dataset.json');
 
+// Copy Balances
+var bankBalances = dataset.bankBalances.map(function (balance) {
+  return  {
+    amount: balance.amount,
+    state: balance.state
+  };
+});
+
 /*
   create an array with accounts from bankBalances that are
   greater than 100000.00
   assign the resulting array to `hundredThousandairs`
 */
-var hundredThousandairs = null;
+
+function getBigAccounts(element, index, array) {
+  if (element.amount > 100000) {
+    return element;
+  }
+}
+
+var hundredThousandairs = dataset.bankBalances.filter(getBigAccounts);
 
 /*
   set a new key for each object in bankBalances named `rounded`
   the value of this key will be the `amount` rounded to the nearest dollar
-  example 
+  example
     {
       "amount": "134758.44",
       "state": "HI",
@@ -18,22 +33,54 @@ var hundredThousandairs = null;
     }
   assign the resulting array to `roundedDollar`
 */
-var roundedDollar = null;
+
+function roundTheseBitches(element, index, array) {
+  var roundedAmount = Math.round(element.amount);
+  // return a new object with the correct properties
+  return {
+    amount: dataset.bankBalances.amount,
+    state: dataset.bankBalances.state,
+    rounded: roundedAmount
+  };
+}
+
+var roundedDollar = dataset.bankBalances.map(roundTheseBitches);
 
 /*
   set a the `amount` value for each object in bankBalances
   to the value of `amount` rounded to the nearest 10 cents
-  example 
+  example
     {
       "amount": 134758.4,
       "state": "HI"
     }
   assign the resulting array to `roundedDime`
 */
-var roundedDime = null;
+
+function myRounder(value, decimals) {
+    return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
+}
+
+function dimeBag(element, index, array) {
+  var dimeAmount = myRounder(element.amount, 1);
+  return {
+    amount: dimeAmount,
+    state: dataset.bankBalances.state,
+  };
+}
+
+var roundedDime = dataset.bankBalances.map(dimeBag);
 
 // set sumOfBankBalances to the sum of all amounts in bankBalances
-var sumOfBankBalances = null;
+
+function sumTotal(previous, current, index, array) {
+  var sum = { // need to turn sum into an object because parse float is called upon 'previous.amount', implying that it is an object, not a mere value.
+    amount: myRounder(parseFloat(previous.amount), 2) + myRounder(parseFloat(current.amount), 2)
+  };
+  return sum;
+}
+
+var sumOfBankBalances = dataset.bankBalances.reduce(sumTotal).amount;
 
 /*
   set sumOfInterests to the sum of the 18.9% interest
@@ -77,14 +124,14 @@ var stateSums = null;
 
 /*
   set lowerSumStates to an array containing
-  only the two letter state abbreviation of each state 
+  only the two letter state abbreviation of each state
   where the sum of amounts in the state is
     less than 1,000,000
  */
 var lowerSumStates = null;
 
 /*
-  set higherStateSums to be the sum of 
+  set higherStateSums to be the sum of
     all amounts of every state
     where the sum of amounts in the state is
       greater than 1,000,000
