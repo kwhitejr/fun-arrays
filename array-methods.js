@@ -94,7 +94,32 @@ var sumOfBankBalances = dataset.bankBalances.reduce(sumTotal).amount;
     Delaware
   the result should be rounded to the nearest cent
  */
-var sumOfInterests = null;
+
+function interestCalculator(element, index, array) {
+  var interest = myRounder(element.amount * 0.189, 2);
+  // return a new object with the correct properties
+  return interest;
+}
+
+function add(x, y) {
+  return x + y;
+}
+
+function stateSelector(element, index, array) {
+  var states = ['WI', 'IL', 'WY', 'OH', 'GA', 'DE'];
+  if (states.indexOf(element.state) > -1) {
+    return element;
+  }
+}
+
+var states = dataset.bankBalances // original data
+              .filter(stateSelector); // filter for certain states
+
+var result = states // array of filtered states
+              .map(interestCalculator) // new array of interest calculations
+              .reduce(add); // sum of interest calculations
+
+var sumOfInterests = myRounder(result, 2); // round to two decimal places
 
 /*
   set sumOfHighInterests to the sum of the 18.9% interest
@@ -109,8 +134,62 @@ var sumOfInterests = null;
     Georgia
     Delaware
   the result should be rounded to the nearest cent
+
+  1. filter out states
+  2. find interest for each account
+  3. find sum of interest for each remaining state
+  4. if sum is greater than 50,000
  */
-var sumOfHighInterests = null;
+
+function stateSelectorInvert(element, index, array) {
+  var states = ['WI', 'IL', 'WY', 'OH', 'GA', 'DE'];
+  if (!(states.indexOf(element.state) > -1)) {
+    return element;
+  }
+}
+
+var states2 = dataset.bankBalances // original data
+              .filter(stateSelectorInvert); // filter for certain states
+
+// var forLoopsforLove = function(array) {
+//   var newObj = {};
+//   for (var i=0; i<array.length; i++) {
+//     var thisState = array[i].state;
+//     var thisAmount = parseFloat(array[i].amount) * 0.189;
+//     if (!(newObj.hasOwnProperty(thisState))) {
+//       newObj[thisState] = thisAmount;
+//     } else {
+//       newObj[thisState] += thisAmount;
+//     }
+//   }
+//   return newObj;
+// };
+
+// function
+
+var stateInterestObj = states2.reduce(function(newObj, arrayEye) {
+  var thisState = arrayEye.state;
+  var thisAmount = parseFloat(arrayEye.amount) * 0.189;
+  if (!(newObj.hasOwnProperty(thisState))) {
+    newObj[thisState] = thisAmount;
+  } else {
+    newObj[thisState] += thisAmount;
+  }
+  return newObj;
+}, {} );
+
+console.log(stateInterestObj);
+
+var highInterestSum = 0;
+
+for (var key in stateInterestObj) {
+  if (stateInterestObj[key] > 50000) {
+    highInterestSum += myRounder(stateInterestObj[key], 2);
+  }
+}
+console.log(highInterestSum);
+
+var sumOfHighInterests = myRounder(highInterestSum, 2);
 
 /*
   aggregate the sum of bankBalance amounts
