@@ -165,9 +165,7 @@ var states2 = dataset.bankBalances // original data
 //   return newObj;
 // };
 
-// function
-
-var stateInterestObj = states2.reduce(function(newObj, arrayEye) {
+var loopsForLove = function(newObj, arrayEye) {
   var thisState = arrayEye.state;
   var thisAmount = parseFloat(arrayEye.amount) * 0.189;
   if (!(newObj.hasOwnProperty(thisState))) {
@@ -176,7 +174,9 @@ var stateInterestObj = states2.reduce(function(newObj, arrayEye) {
     newObj[thisState] += thisAmount;
   }
   return newObj;
-}, {} );
+};
+
+var stateInterestObj = states2.reduce(loopsForLove, {} );
 
 console.log(stateInterestObj);
 
@@ -199,7 +199,20 @@ var sumOfHighInterests = myRounder(highInterestSum, 2);
     and the value is the sum of all amounts from that state
       the value must be rounded to the nearest cent
  */
-var stateSums = null;
+
+var myLoopsForLove = function(newObj, arrayEye) {
+  var thisState = arrayEye.state;
+  var thisAmount = parseFloat(arrayEye.amount);
+  if (!(newObj.hasOwnProperty(thisState))) {
+    newObj[thisState] = myRounder(thisAmount, 2);
+  } else {
+    var roundSum = myRounder(newObj[thisState], 2) + myRounder(thisAmount, 2);
+    newObj[thisState] = myRounder(roundSum, 2);
+  }
+  return newObj;
+};
+
+var stateSums = dataset.bankBalances.reduce(myLoopsForLove, {});
 
 /*
   set lowerSumStates to an array containing
@@ -207,7 +220,20 @@ var stateSums = null;
   where the sum of amounts in the state is
     less than 1,000,000
  */
-var lowerSumStates = null;
+
+function lowSum(obj) {
+  lowSumArray = [];
+  for (var k in obj) {
+    if (obj[k] < 1000000) {
+      lowSumArray.push(k);
+    }
+  }
+  return lowSumArray;
+}
+
+console.log(lowSum(stateSums));
+
+var lowerSumStates = lowSum(stateSums);
 
 /*
   set higherStateSums to be the sum of
@@ -215,7 +241,19 @@ var lowerSumStates = null;
     where the sum of amounts in the state is
       greater than 1,000,000
  */
-var higherStateSums = null;
+function highSum(obj) {
+  highSumArray = [];
+  for (var k in obj) {
+    if (obj[k] > 1000000) {
+      highSumArray.push(obj[k]);
+    }
+  }
+  return highSumArray;
+}
+
+console.log(highSum(stateSums));
+
+var higherStateSums = highSum(stateSums).reduce(add);
 
 /*
   set areStatesInHigherStateSum to be true if
@@ -229,6 +267,9 @@ var higherStateSums = null;
     Delaware
   false otherwise
  */
+
+
+
 var areStatesInHigherStateSum = null;
 
 /*
