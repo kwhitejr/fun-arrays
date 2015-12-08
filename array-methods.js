@@ -268,7 +268,19 @@ var higherStateSums = highSum(stateSums).reduce(add);
   false otherwise
  */
 
+// function stateSelector(element, index, array) {
+//   var states = ['WI', 'IL', 'WY', 'OH', 'GA', 'DE'];
+//   if (states.indexOf(element.state) > -1) {
+//     return element;
+//   }
+// }
 
+// var higherSumStates = dataset.bankBalances // original data
+//               .filter(stateSelector); // filter for certain states
+
+// var result = states // array of filtered states
+//               .something // find sum for each state
+//               .every(~~~~); // return true if each state's sum is over 2,500,000
 
 var areStatesInHigherStateSum = null;
 
